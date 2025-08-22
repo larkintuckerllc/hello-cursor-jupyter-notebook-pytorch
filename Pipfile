@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 ipykernel = "==6.29.5"
 jupytext = "==1.17.1"
+torch = "==2.8.0"
+torchvision = "==0.23.0"
 
 [dev-packages]
 
