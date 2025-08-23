@@ -22,51 +22,32 @@ import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 
 # %% [markdown]
-# # fetch
+# # constants
 
 # %%
-# Define a custom PyTorch dataset for the MPG data
-class MPGDataset(Dataset):
+BATCH_SIZE = 32
+CSV_FILE = '../data/mpg-pounds.csv'
+
+# %% [markdown]
+# # fetch
+
+
+# %%
+class CustomDataset(Dataset):
     def __init__(self, csv_file):
-        """
-        Args:
-            csv_file (string): Path to the CSV file
-        """
-        self.data = pd.read_csv(csv_file)
+        df = pd.read_csv(csv_file)
+        self.pounds = torch.tensor(df["pounds"].values, dtype=torch.float32)
+        self.mpg = torch.tensor(df["mpg"].values, dtype=torch.float32)
         
     def __len__(self):
-        return len(self.data)
+        return self.pounds.shape[0]
     
     def __getitem__(self, idx):
-        # Extract features (pounds) and labels (mpg)
-        pounds = torch.tensor(self.data.iloc[idx, 0], dtype=torch.float32)
-        mpg = torch.tensor(self.data.iloc[idx, 1], dtype=torch.float32)
-        
-        # Reshape to 2D tensors for linear regression
-        pounds = pounds.view(-1, 1)  # Shape: (1, 1)
-        mpg = mpg.view(-1, 1)        # Shape: (1, 1)
-        
-        return pounds, mpg
+        return self.pounds[idx].view(-1, 1), self.mpg[idx].view(-1, 1)
 
-# Load the dataset
-dataset = MPGDataset('../data/mpg-pounds.csv')
+dataset = CustomDataset(CSV_FILE)
+dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
 
-# Create a DataLoader for batch training
-batch_size = 32
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-# Display dataset info
 print(f"Dataset size: {len(dataset)}")
 print(f"Number of batches: {len(dataloader)}")
-print(f"Batch size: {batch_size}")
-
-# Show a sample batch
-sample_batch = next(iter(dataloader))
-pounds_batch, mpg_batch = sample_batch
-print(f"\nSample batch shapes:")
-print(f"Pounds (features): {pounds_batch.shape}")
-print(f"MPG (labels): {mpg_batch.shape}")
-print(f"\nFirst few samples:")
-print(f"Pounds: {pounds_batch[:5].flatten()}")
-print(f"MPG: {mpg_batch[:5].flatten()}")
-
+print(f"Batch size: {BATCH_SIZE}")
