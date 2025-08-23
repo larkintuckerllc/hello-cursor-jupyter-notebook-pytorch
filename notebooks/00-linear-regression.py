@@ -88,43 +88,9 @@ print("Training completed!")
 # # evaluate
 
 # %%
-# Set model to evaluation mode
-# model.eval()
-
-# # Get predictions on the entire dataset
-# with torch.no_grad():
-#     all_pounds = torch.cat([batch[0] for batch in dataloader])
-#     all_mpg = torch.cat([batch[1] for batch in dataloader])
-    
-#     predictions = model(all_pounds)
-    
-#     # Calculate final loss
-#     final_loss = criterion(predictions, all_mpg)
-#     print(f'Final Loss: {final_loss.item():.4f}')
-    
-#     # Print model parameters (slope and intercept)
-#     weight = model.linear.weight.item()
-#     bias = model.linear.bias.item()
-#     print(f'Learned relationship: MPG = {weight:.4f} * Pounds + {bias:.4f}')
-
-# %% [markdown]
-# # visualize
-
-# %%
-# import matplotlib.pyplot as plt
-
-# # Convert tensors to numpy for plotting
-# pounds_np = all_pounds.numpy().flatten()
-# mpg_np = all_mpg.numpy().flatten()
-# predictions_np = predictions.numpy().flatten()
-
-# # Create the plot
-# plt.figure(figsize=(10, 6))
-# plt.scatter(pounds_np, mpg_np, alpha=0.6, label='Actual Data')
-# plt.plot(pounds_np, predictions_np, 'r-', linewidth=2, label='Linear Regression')
-# plt.xlabel('Weight (Pounds)')
-# plt.ylabel('Miles Per Gallon (MPG)')
-# plt.title('Linear Regression: MPG vs Weight')
-# plt.legend()
-# plt.grid(True, alpha=0.3)
-# plt.show()
+model.eval()
+dataloader = DataLoader(dataset, batch_size=len(dataset), shuffle=True)
+for batch_pounds, batch_mpg in dataloader:
+    pred_mpg = model(batch_pounds)
+    loss = loss_fn(pred_mpg, batch_mpg)
+    print(f'Final Loss: {loss.item():.4f}')
