@@ -33,31 +33,40 @@ class MPGDataset(Dataset):
             csv_file (string): Path to the CSV file
         """
         self.data = pd.read_csv(csv_file)
-        # Convert to PyTorch tensors
-        self.pounds = torch.tensor(self.data['pounds'].values, dtype=torch.float32)
-        self.mpg = torch.tensor(self.data['mpg'].values, dtype=torch.float32)
         
     def __len__(self):
         return len(self.data)
     
     def __getitem__(self, idx):
-        return self.pounds[idx], self.mpg[idx]
+        # Extract features (pounds) and labels (mpg)
+        pounds = torch.tensor(self.data.iloc[idx, 0], dtype=torch.float32)
+        mpg = torch.tensor(self.data.iloc[idx, 1], dtype=torch.float32)
+        
+        # Reshape to 2D tensors for linear regression
+        pounds = pounds.view(-1, 1)  # Shape: (1, 1)
+        mpg = mpg.view(-1, 1)        # Shape: (1, 1)
+        
+        return pounds, mpg
 
 # Load the dataset
-dataset = MPGDataset('data/mpg-pounds.csv')
+dataset = MPGDataset('../data/mpg-pounds.csv')
 
-# Create a DataLoader for batch processing
-dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+# Create a DataLoader for batch training
+batch_size = 32
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Display dataset info
 print(f"Dataset size: {len(dataset)}")
-print(f"First few samples:")
-for i in range(min(5, len(dataset))):
-    pounds, mpg = dataset[i]
-    print(f"  Sample {i}: Weight = {pounds:.3f} pounds, MPG = {mpg:.2f}")
+print(f"Number of batches: {len(dataloader)}")
+print(f"Batch size: {batch_size}")
 
-# Display data shapes
-print(f"\nData shapes:")
-print(f"  Pounds tensor shape: {dataset.pounds.shape}")
-print(f"  MPG tensor shape: {dataset.mpg.shape}")
-print(f"  Data types: Pounds={dataset.pounds.dtype}, MPG={dataset.mpg.dtype}")
+# Show a sample batch
+sample_batch = next(iter(dataloader))
+pounds_batch, mpg_batch = sample_batch
+print(f"\nSample batch shapes:")
+print(f"Pounds (features): {pounds_batch.shape}")
+print(f"MPG (labels): {mpg_batch.shape}")
+print(f"\nFirst few samples:")
+print(f"Pounds: {pounds_batch[:5].flatten()}")
+print(f"MPG: {mpg_batch[:5].flatten()}")
+
