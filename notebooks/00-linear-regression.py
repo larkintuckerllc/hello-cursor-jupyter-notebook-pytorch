@@ -27,8 +27,8 @@ from torch.utils.data import Dataset, DataLoader
 # %%
 BATCH_SIZE = 10
 CSV_FILE = '../data/mpg-pounds.csv'
-EPOCHS = 50
-LEARNING_RATE = 0.001
+EPOCHS = 100
+LEARNING_RATE = 0.05
 
 # %% [markdown]
 # # fetch
@@ -67,17 +67,17 @@ class NeuralNetwork(torch.nn.Module):
         return self.linear(x)
 
 model = NeuralNetwork()
-criterion = torch.nn.MSELoss()
+loss_fn = torch.nn.MSELoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 
 for epoch in range(EPOCHS):
     total_loss = 0
     for batch_pounds, batch_mpg in dataloader:
-        outputs = model(batch_pounds)
-        loss = criterion(outputs, batch_mpg)
-        optimizer.zero_grad()
+        pred_mpg = model(batch_pounds)
+        loss = loss_fn(pred_mpg, batch_mpg)
         loss.backward()
         optimizer.step()
+        optimizer.zero_grad()
         total_loss += loss.item()
     if (epoch + 1) % 10 == 0:
         avg_loss = total_loss / len(dataloader)
