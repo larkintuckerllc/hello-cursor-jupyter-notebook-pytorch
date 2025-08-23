@@ -28,7 +28,7 @@ from torch.utils.data import Dataset, DataLoader
 BATCH_SIZE = 10
 CSV_FILE = '../data/mpg-pounds.csv'
 EPOCHS = 50
-LEARNING_RATE = 0.2
+LEARNING_RATE = 0.001
 
 # %% [markdown]
 # # fetch
