@@ -29,6 +29,7 @@ BATCH_SIZE = 10
 CSV_FILE = '../data/mpg-pounds.csv'
 EPOCHS = 100
 LEARNING_RATE = 0.05
+MODEL_PATH = '../models/linear-regression.pth'
 
 # %% [markdown]
 # # fetch
@@ -94,3 +95,11 @@ for batch_pounds, batch_mpg in dataloader:
     pred_mpg = model(batch_pounds)
     loss = loss_fn(pred_mpg, batch_mpg)
     print(f'Final Loss: {loss.item():.4f}')
+
+
+
+# %% [markdown]
+# # save
+
+# %%
+torch.save(model.state_dict(), MODEL_PATH)
