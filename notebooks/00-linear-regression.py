@@ -91,10 +91,11 @@ print("Training completed!")
 # %%
 model.eval()
 dataloader = DataLoader(dataset, batch_size=len(dataset), shuffle=True)
-for batch_pounds, batch_mpg in dataloader:
-    pred_mpg = model(batch_pounds)
-    loss = loss_fn(pred_mpg, batch_mpg)
-    print(f'Final Loss: {loss.item():.4f}')
+with torch.no_grad():
+    for batch_pounds, batch_mpg in dataloader:
+        pred_mpg = model(batch_pounds)
+        loss = loss_fn(pred_mpg, batch_mpg)
+        print(f'Final Loss: {loss.item():.4f}')
 
 
 

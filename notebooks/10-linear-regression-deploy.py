@@ -23,7 +23,8 @@ import torch
 # # constants
 
 # %%
-MODEL_PATH = '../models/linear-regression.pth'
+MODEL_PATH = "../models/linear-regression.pth"
+POUNDS = 2.093837833
 
 
 # %% [markdown]
@@ -46,3 +47,8 @@ model.eval()
 # # inference
 
 # %%
+single_pounds = torch.tensor([[POUNDS]], dtype=torch.float32)
+with torch.no_grad():
+    pred_mpg = model(single_pounds)
+print(f"Input: {POUNDS} pounds")
+print(f"Predicted MPG: {pred_mpg.item():.4f}")
